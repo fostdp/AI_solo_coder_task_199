@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汽车空气悬架高度控制模拟系统</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>🚗 汽车空气悬架高度控制模拟系统</h1>
+      <div class="status-indicator" id="systemStatus">
+        <span class="status-dot status-normal"></span>
+        <span class="status-text">系统正常</span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="left-panel">
+        <div class="panel-header">
+          <h2>悬架可视化</h2>
+        </div>
+        <canvas id="suspensionCanvas" width="900" height="400"></canvas>
+        
+        <div class="panel-header">
+          <h2>高度变化历史</h2>
+        </div>
+        <canvas id="historyChart" width="900" height="150"></canvas>
+      </div>
+
+      <div class="right-panel">
+        <div class="dashboard-panel">
+          <div class="panel-header">
+            <h2>车身高度仪表盘</h2>
+          </div>
+          <div class="gauge-container">
+            <canvas id="heightGauge" width="200" height="200"></canvas>
+            <div class="gauge-value" id="gaugeValue">300 mm</div>
+            <div class="gauge-label">当前高度</div>
+          </div>
+          <div class="gauge-info">
+            <div class="info-row">
+              <span>最低:</span>
+              <span>200 mm</span>
+            </div>
+            <div class="info-row">
+              <span>标准:</span>
+              <span>300 mm</span>
+            </div>
+            <div class="info-row">
+              <span>最高:</span>
+              <span>500 mm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="panel-header">
+            <h2>参数调节</h2>
+          </div>
+          
+          <div class="slider-group">
+            <label>
+              <span>气囊充气量</span>
+              <span id="inflationValue">50%</span>
+            </label>
+            <input type="range" id="inflationSlider" min="0" max="100" value="50">
+          </div>
+
+          <div class="slider-group">
+            <label>
+              <span>车辆载荷</span>
+              <span id="payloadValue">500 kg</span>
+            </label>
+            <input type="range" id="payloadSlider" min="0" max="2000" value="500">
+          </div>
+
+          <div class="slider-group">
+            <label>
+              <span>环境温度</span>
+              <span id="temperatureValue">20 °C</span>
+            </label>
+            <input type="range" id="temperatureSlider" min="-40" max="60" value="20">
+          </div>
+
+          <div class="metrics-display">
+            <div class="metric-item">
+              <span class="metric-label">非线性因子:</span>
+              <span id="nonlinearDisplay" class="metric-value">1.00x</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">压缩比率:</span>
+              <span id="compressionDisplay" class="metric-value">0%</span>
+            </div>
+          </div>
+
+          <div class="params-config">
+            <h3>悬架参数配置</h3>
+            <div class="param-row">
+              <label>弹簧刚度 (N/m):</label>
+              <input type="number" id="springConstant" value="25000" step="1000">
+            </div>
+            <div class="param-row">
+              <label>最大压力 (kPa):</label>
+              <input type="number" id="maxPressure" value="1000" step="100">
+            </div>
+            <div class="param-row">
+              <label>活塞面积 (cm²):</label>
+              <input type="number" id="pistonArea" value="150" step="10">
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="autoLevelBtn" class="btn btn-primary">🔄 自动调平</button>
+            <button id="saveSnapshotBtn" class="btn btn-secondary">💾 保存快照</button>
+            <button id="resetBtn" class="btn btn-warning">↺ 重置</button>
+          </div>
+        </div>
+
+        <div class="diagnostics-panel">
+          <div class="panel-header">
+            <h2>故障诊断</h2>
+            <span class="diagnostics-badge" id="diagnosticsBadge">正常</span>
+          </div>
+          
+          <div class="diagnostics-content">
+            <div class="fault-section" id="faultSection" style="display: none;">
+              <h4>❌ 故障</h4>
+              <div class="fault-list" id="faultList"></div>
+            </div>
+            
+            <div class="warning-section" id="warningSection" style="display: none;">
+              <h4>⚠️ 预警</h4>
+              <div class="warning-list" id="warningList"></div>
+            </div>
+
+            <div class="normal-message" id="normalMessage">
+              <p>✅ 系统运行正常</p>
+            </div>
+
+            <div class="maintenance-tips">
+              <h4>�️ 维护建议</h4>
+              <ul id="maintenanceTips"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="snapshots-panel">
+          <div class="panel-header">
+            <h2>历史快照</h2>
+          </div>
+          <div class="snapshot-list" id="snapshotList">
+            <p class="empty-text">加载中...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="heightDisplay">车身高度: -- mm</span>
+      <span id="pressureDisplay">气囊压力: -- kPa</span>
+      <span id="stiffnessDisplay">系统刚度: -- N/m</span>
+      <span id="temperatureDisplay">温度: -- °C</span>
+    </div>
+  </div>
+
+  <script src="suspension-dynamics.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
